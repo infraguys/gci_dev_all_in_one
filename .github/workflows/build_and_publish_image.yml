@@ -1,0 +1,71 @@
+name: packer
+
+on:
+  push:
+
+env:
+  PACKER_VERSION: "latest"
+  PYTHON_VERSION: "3.12"
+  CORE_BRANCH: "master"
+
+# TODO: we may create separate `publish` job in future
+permissions:
+  contents: write
+
+jobs:
+  build_n_publish:
+    runs-on: ubuntu-latest
+    name: Build Image
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup `packer`
+        uses: hashicorp/setup-packer@main
+        with:
+          version: ${{ env.PACKER_VERSION }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install tox
+        run: pip install tox
+      - name: Set up QEMU
+        run: |
+          sudo apt -y update
+          sudo apt install -y qemu-system-amd64 qemu-kvm qemu-utils libvirt-daemon-system libvirt-dev mkisofs zip
+          sudo adduser $USER libvirt
+          sudo adduser $USER kvm
+          sudo chmod +666 /dev/kvm
+      - name: Build image
+        run: |
+          ./build.sh
+      - name: Convert stand image
+        run: |
+          mkdir ./packed
+          qemu-img convert -O qcow2 output/*.raw ./packed/stand.qcow2 &
+          qemu-img convert -O vdi output/*.raw ./packed/stand.vdi &
+          wait
+          zip ./packed/stand.qcow2.zip ./packed/stand.qcow2 -8 &
+          zip ./packed/stand.vdi.zip ./packed/stand.vdi -8 &
+          wait
+          rm ./packed/stand.qcow2 ./packed/stand.vdi
+      - name: Save artifact qcow2
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: qcow2 image
+          path: ./packed/stand.qcow2.zip
+      - name: Save artifact vdi
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: vdi image
+          path: ./packed/stand.vdi.zip
+      - name: Publish image (for tags only)
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ./packed/*
+          tag: ${{ github.ref }}
+          overwrite: true
+          file_glob: true

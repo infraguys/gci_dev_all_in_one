@@ -21,17 +21,20 @@ set -x
 set -o pipefail
 
 
+CORE_BRANCH=${CORE_BRANCH:-master}
+
+
 python3 -m venv /tmp/.venv
 source /tmp/.venv/bin/activate
 pip install genesis-devtools
 
 #Build core image
-git clone https://github.com/infraguys/genesis_core.git
+git clone -b "$CORE_BRANCH" https://github.com/infraguys/genesis_core.git
 cd genesis_core
 export ALLOW_USER_PASSWD=true
 export FREQUENT_LOG_VACUUM=true
-genesis build -f .
+genesis build -f . "$@"
 cd -
 
 # Build stand image
-genesis build -s element -f .
+genesis build -s element -f . "$@"

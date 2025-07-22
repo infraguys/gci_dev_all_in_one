@@ -62,5 +62,5 @@ curl --location --globoff 'http://10.20.0.2:11010/v1/hypervisors/' \
 
 sudo systemctl restart netfilter-persistent.service
 
-#Do bootstrap only once
+# Remove the cron job to ensure bootstrap runs only once
 sudo rm /etc/cron.d/core_bootstrap

@@ -62,10 +62,5 @@ curl --location --globoff 'http://10.20.0.2:11010/v1/hypervisors/' \
 
 sudo systemctl restart netfilter-persistent.service
 
-# Make it unsafe but usable for newbies
-sudo passwd -u ubuntu
-echo "ubuntu:ubuntu" | sudo chpasswd
-sudo rm /etc/ssh/sshd_config.d/60-cloudimg-settings.conf
-
-#Do so only once
+# Remove the cron job to ensure bootstrap runs only once
 sudo rm /etc/cron.d/core_bootstrap

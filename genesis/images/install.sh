@@ -57,6 +57,10 @@ echo "PERCENT=20" | sudo tee -a /etc/default/zramswap > /dev/null
 sudo systemctl enable zramswap
 sudo systemctl start zramswap
 
+# ksm
+sudo apt install -y ksmtuned
+sudo systemctl enable ksmtuned
+
 sudo apt-get update
 sudo apt install qemu-guest-agent bridge-utils qemu-kvm libvirt-daemon-system libvirt-dev mkisofs net-tools libvirt-daemon-driver-storage-zfs dnsmasq qemu-system-modules-spice iptables-persistent -y
 

@@ -59,6 +59,8 @@ sudo systemctl start zramswap
 
 # ksm
 sudo apt install -y ksmtuned
+# minimize cpu usage
+echo "KSM_SLEEP_MSEC=100" | sudo tee -a /etc/ksmtuned.conf > /dev/null
 sudo systemctl enable ksmtuned
 
 sudo apt-get update

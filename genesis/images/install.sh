@@ -70,7 +70,6 @@ sudo apt install qemu-guest-agent bridge-utils qemu-kvm libvirt-daemon-system li
 # libvirt install breaks dns, fix it temporarily
 sudo resolvectl dns ens4 1.1.1.1
 
-
 cat | sudo tee -a /etc/libvirt/libvirtd.conf > /dev/null <<EOL
 listen_tcp = 1
 listen_addr = "0.0.0.0"
@@ -86,14 +85,6 @@ sudo systemctl start libvirtd
 zfs create rpool/disks
 virsh pool-define-as --name rpool --source-name rpool/disks --type zfs
 virsh pool-start rpool
-
-
-# genesis-core itself
-cd /opt
-sudo chown ubuntu ./ -R
-python3 -m venv .venv
-source .venv/bin/activate
-pip install genesis-devtools
 
 # iptables rules are order-sensitive, so set appropriate rules via libvirt hooks
 sudo mkdir -p /etc/libvirt/hooks

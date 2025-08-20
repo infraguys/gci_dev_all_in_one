@@ -48,6 +48,8 @@ jobs:
           zip ./packed/stand.vdi.zip ./packed/stand.vdi -8 &
           wait
           rm ./packed/stand.qcow2 ./packed/stand.vdi
+          # Show image sizes
+          ls -la ./packed/
       - name: Save artifact qcow2
         if: ${{ !startsWith(github.ref, 'refs/tags/') }}
         uses: actions/upload-artifact@v4

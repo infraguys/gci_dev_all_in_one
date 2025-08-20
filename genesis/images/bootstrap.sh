@@ -32,6 +32,13 @@ ADMIN_TOKEN=$(curl --location 'http://10.20.0.2:11010/v1/iam/clients/00000000-00
 
 echo $ADMIN_TOKEN > /home/ubuntu/admin_token.txt
 
+curl --location --request PUT 'http://10.20.0.2:11010/v1/iam/clients/00000000-0000-0000-0000-000000000000' \
+    --header 'Content-Type: application/json' \
+    --header "Authorization: Bearer $ADMIN_TOKEN" \
+    --data '{
+        "redirect_url": "http://10.20.0.2:11010/v1/"
+    }'
+
 curl --location --globoff 'http://10.20.0.2:11010/v1/hypervisors/' \
     --header 'Content-Type: application/json' \
     --header "Authorization: Bearer $ADMIN_TOKEN" \

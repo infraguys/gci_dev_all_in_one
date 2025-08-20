@@ -24,8 +24,8 @@ EL_PATH="/opt/stand"
 
 
 # Optimize apt
-echo 'APT::Install-Recommends "false";' | sudo tee -a /etc/apt/apt.conf.d/00genesis.conf > /dev/null
-echo 'APT::Install-Suggests "false";' | sudo tee -a /etc/apt/apt.conf.d/00genesis.conf > /dev/null
+echo 'APT::Install-Recommends "false";' | sudo tee -a /etc/apt/apt.conf.d/99genesis.conf > /dev/null
+echo 'APT::Install-Suggests "false";' | sudo tee -a /etc/apt/apt.conf.d/99genesis.conf > /dev/null
 sudo apt-get update
 sudo apt-get install python3.12-venv yq -y
 
@@ -37,7 +37,7 @@ sudo yq -yi '.system_info.default_user.lock_passwd |= false' /etc/cloud/cloud.cf
 # Common optimizations for FS and RAM usage
 sudo zfs set compression=zstd rpool
 sudo zfs set sync=disabled rpool
-sudo zfs create rpool/opt
+sudo zfs create -o compression=zstd-10 -o recordsize=1M rpool/opt
 sudo mv /opt_orig/stand /opt
 sudo rm -rf /opt_orig
 

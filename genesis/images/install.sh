@@ -49,14 +49,6 @@ sudo cloud-init clean --log --seed
 sudo rm /etc/netplan/50-cloud-init.yaml
 echo "datasource_list: [ None ]" | sudo tee /etc/cloud/cloud.cfg.d/99_overrides.cfg
 
-# zram
-sudo apt-get update
-sudo apt-get install -y zram-tools linux-modules-extra-$(uname -r)
-echo "ALGO=zstd" | sudo tee -a /etc/default/zramswap > /dev/null
-echo "PERCENT=20" | sudo tee -a /etc/default/zramswap > /dev/null
-sudo systemctl enable zramswap
-sudo systemctl start zramswap
-
 # ksm
 sudo apt install -y ksmtuned
 # minimize cpu usage
@@ -106,6 +98,7 @@ echo "@reboot ubuntu ${EL_PATH}/genesis/images/bootstrap.sh 2>&1 | logger -t gen
 # Minimize image size
 sudo apt-get clean
 sudo rm -rf /var/lib/apt/lists/*
+sudo rm -rf /tmp/*
 sudo sync
 sudo zpool sync
 sudo zpool trim -w rpool

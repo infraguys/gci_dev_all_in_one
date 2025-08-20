@@ -6,9 +6,14 @@ set -o pipefail
 
 EL_PATH="/opt/stand/genesis_core"
 
+cd /opt
+sudo chown ubuntu ./ -R
+python3 -m venv .venv
+source .venv/bin/activate
+pip install genesis-devtools
+
 cd $EL_PATH
-source /opt/.venv/bin/activate
-genesis bootstrap -i output/genesis-core.raw -f -m core --memory 3000
+genesis bootstrap -i output/genesis-core.raw -f -m core --memory 2000
 sudo virsh autostart genesis-core-bootstrap
 
 while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' 10.20.0.2:11010)" != "200" ]]; do
@@ -61,6 +66,15 @@ curl --location --globoff 'http://10.20.0.2:11010/v1/hypervisors/' \
 # }'
 
 sudo systemctl restart netfilter-persistent.service
+
+# Some post install additions to minify original distributed image
+# zram
+sudo apt-get update
+sudo apt-get install -y zram-tools linux-modules-extra-$(uname -r)
+echo "ALGO=zstd" | sudo tee -a /etc/default/zramswap > /dev/null
+echo "PERCENT=20" | sudo tee -a /etc/default/zramswap > /dev/null
+sudo systemctl enable zramswap
+sudo systemctl start zramswap
 
 # Remove the cron job to ensure bootstrap runs only once
 sudo rm /etc/cron.d/core_bootstrap

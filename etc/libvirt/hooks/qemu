@@ -1,0 +1,51 @@
+#!/bin/bash
+
+if [ "${1}" = "genesis-core-bootstrap" ]; then
+
+    GUEST_IP=10.20.0.2
+    HOST_LIBVIRT_INTERFACE=virbr1
+    HOST_INTERFACE_ON_BRIDGE=enp1s0
+
+    # core api
+    GUEST_PORT=11010
+    HOST_PORT=11010
+    TRANSPORT_PROTOCOL=tcp
+
+    if [ "${2}" = "stopped" ] || [ "${2}" = "reconnect" ]; then
+     /sbin/iptables -D FORWARD -o $HOST_LIBVIRT_INTERFACE -p $TRANSPORT_PROTOCOL -d $GUEST_IP --dport $GUEST_PORT -j ACCEPT
+     /sbin/iptables -t nat -D PREROUTING -i $HOST_INTERFACE_ON_BRIDGE -p $TRANSPORT_PROTOCOL --dport $HOST_PORT -j DNAT --to $GUEST_IP:$GUEST_PORT
+    fi
+    if [ "${2}" = "start" ] || [ "${2}" = "reconnect" ]; then
+     /sbin/iptables -I FORWARD 1 -o $HOST_LIBVIRT_INTERFACE -p $TRANSPORT_PROTOCOL -d $GUEST_IP --dport $GUEST_PORT -j ACCEPT
+     /sbin/iptables -t nat -I PREROUTING 1 -i $HOST_INTERFACE_ON_BRIDGE -p $TRANSPORT_PROTOCOL --dport $HOST_PORT -j DNAT --to $GUEST_IP:$GUEST_PORT
+    fi
+
+    # private DNS (tcp)
+    GUEST_PORT=5300
+    HOST_PORT=53
+    TRANSPORT_PROTOCOL=tcp
+
+    if [ "${2}" = "stopped" ] || [ "${2}" = "reconnect" ]; then
+     /sbin/iptables -D FORWARD -o $HOST_LIBVIRT_INTERFACE -p $TRANSPORT_PROTOCOL -d $GUEST_IP --dport $GUEST_PORT -j ACCEPT
+     /sbin/iptables -t nat -D PREROUTING -i $HOST_INTERFACE_ON_BRIDGE -p $TRANSPORT_PROTOCOL --dport $HOST_PORT -j DNAT --to $GUEST_IP:$GUEST_PORT
+    fi
+    if [ "${2}" = "start" ] || [ "${2}" = "reconnect" ]; then
+     /sbin/iptables -I FORWARD 1 -o $HOST_LIBVIRT_INTERFACE -p $TRANSPORT_PROTOCOL -d $GUEST_IP --dport $GUEST_PORT -j ACCEPT
+     /sbin/iptables -t nat -I PREROUTING 1 -i $HOST_INTERFACE_ON_BRIDGE -p $TRANSPORT_PROTOCOL --dport $HOST_PORT -j DNAT --to $GUEST_IP:$GUEST_PORT
+    fi
+
+    # private DNS (udp)
+    GUEST_PORT=5300
+    HOST_PORT=53
+    TRANSPORT_PROTOCOL=udp
+
+    if [ "${2}" = "stopped" ] || [ "${2}" = "reconnect" ]; then
+     /sbin/iptables -D FORWARD -o $HOST_LIBVIRT_INTERFACE -p $TRANSPORT_PROTOCOL -d $GUEST_IP --dport $GUEST_PORT -j ACCEPT
+     /sbin/iptables -t nat -D PREROUTING -i $HOST_INTERFACE_ON_BRIDGE -p $TRANSPORT_PROTOCOL --dport $HOST_PORT -j DNAT --to $GUEST_IP:$GUEST_PORT
+    fi
+    if [ "${2}" = "start" ] || [ "${2}" = "reconnect" ]; then
+     /sbin/iptables -I FORWARD 1 -o $HOST_LIBVIRT_INTERFACE -p $TRANSPORT_PROTOCOL -d $GUEST_IP --dport $GUEST_PORT -j ACCEPT
+     /sbin/iptables -t nat -I PREROUTING 1 -i $HOST_INTERFACE_ON_BRIDGE -p $TRANSPORT_PROTOCOL --dport $HOST_PORT -j DNAT --to $GUEST_IP:$GUEST_PORT
+    fi
+
+fi

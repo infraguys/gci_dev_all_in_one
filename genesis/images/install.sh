@@ -95,16 +95,13 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install genesis-devtools
 
+# iptables rules are order-sensitive, so set appropriate rules via libvirt hooks
+sudo mkdir -p /etc/libvirt/hooks
+sudo cp $EL_PATH/etc/libvirt/hooks/qemu /etc/libvirt/hooks/
+sudo chmod +x /etc/libvirt/hooks/qemu
+
 cat | sudo tee /etc/iptables/rules.v4 > /dev/null <<EOL
-*filter
--A FORWARD -d 10.20.0.2/32 -o virbr1 -p tcp -m tcp --dport 11010 -j ACCEPT
--A FORWARD -d 10.20.0.2/32 -o virbr1 -p tcp -m tcp --dport 5300 -j ACCEPT
--A FORWARD -d 10.20.0.2/32 -o virbr1 -p udp -m udp --dport 5300 -j ACCEPT
-COMMIT
 *nat
--A PREROUTING -i enp1s0 -p tcp -m tcp --dport 11010 -j DNAT --to-destination 10.20.0.2:11010
--A PREROUTING -i enp1s0 -p tcp -m tcp --dport 53 -j DNAT --to-destination 10.20.0.2:5300
--A PREROUTING -i enp1s0 -p udp -m udp --dport 53 -j DNAT --to-destination 10.20.0.2:5300
 -A POSTROUTING -s 10.20.0.0/24 -o enp1s0 -j MASQUERADE
 COMMIT
 EOL

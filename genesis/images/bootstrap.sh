@@ -50,7 +50,8 @@ curl --location --globoff 'http://10.20.0.2:11010/v1/hypervisors/' \
             "network": "genesis-core-net",
             "storage_pool": "rpool",
             "connection_uri": "qemu+tcp://10.20.0.1/system",
-            "machine_prefix": "dev-"
+            "machine_prefix": "dev-",
+            "iface_rom_file": "/usr/share/qemu/1af41041.rom"
         },
         "avail_cores": 10,
         "avail_ram": 15000,

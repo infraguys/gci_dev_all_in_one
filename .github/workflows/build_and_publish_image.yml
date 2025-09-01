@@ -44,10 +44,11 @@ jobs:
           qemu-img convert -O qcow2 output/*.raw ./packed/stand.qcow2 &
           qemu-img convert -O vdi output/*.raw ./packed/stand.vdi &
           wait
-          zip ./packed/stand.qcow2.zip ./packed/stand.qcow2 -8 &
-          zip ./packed/stand.vdi.zip ./packed/stand.vdi -8 &
+          mv output/*.raw ./packed/stand.raw
+          gzip --best ./packed/stand.qcow2 &
+          gzip --best ./packed/stand.vdi &
+          gzip --best ./packed/stand.raw &
           wait
-          rm ./packed/stand.qcow2 ./packed/stand.vdi
           # Show image sizes
           ls -la ./packed/
       - name: Save artifact qcow2
@@ -55,13 +56,22 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: qcow2 image
-          path: ./packed/stand.qcow2.zip
+          path: ./packed/stand.qcow2.gz
+          compression-level: 0
       - name: Save artifact vdi
         if: ${{ !startsWith(github.ref, 'refs/tags/') }}
         uses: actions/upload-artifact@v4
         with:
           name: vdi image
-          path: ./packed/stand.vdi.zip
+          path: ./packed/stand.vdi.gz
+          compression-level: 0
+      - name: Save artifact raw
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: raw image
+          path: ./packed/stand.raw.gz
+          compression-level: 0
       - name: Publish image (for tags only)
         if: ${{ startsWith(github.ref, 'refs/tags/') }}
         uses: svenstaro/upload-release-action@v2

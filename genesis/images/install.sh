@@ -74,7 +74,7 @@ sudo systemctl start libvirtd-tcp.socket
 sudo systemctl start libvirtd
 
 # Prepare storage
-zfs create rpool/disks
+zfs create -o compression=lz4 rpool/disks
 virsh pool-define-as --name rpool --source-name rpool/disks --type zfs
 virsh pool-start rpool
 

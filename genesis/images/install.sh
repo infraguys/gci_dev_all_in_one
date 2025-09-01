@@ -93,6 +93,9 @@ cat | sudo tee -a /etc/sysctl.conf > /dev/null <<EOL
 net.ipv4.ip_forward=1
 EOL
 
+# Speed up VM boot
+sudo curl http://repository.genesis-core.tech:8081/1af41041/latest/1af41041.rom --output /usr/share/qemu/1af41041.rom
+
 echo "@reboot ubuntu ${EL_PATH}/genesis/images/bootstrap.sh 2>&1 | logger -t genesis_bootstrap" | sudo tee /etc/cron.d/core_bootstrap > /dev/null
 
 # Minimize image size

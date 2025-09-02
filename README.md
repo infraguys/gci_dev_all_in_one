@@ -2,7 +2,10 @@
 
 ## How to use
 
-- Get latest release [qcow2](https://github.com/infraguys/gci_dev_all_in_one/releases/latest/download/stand.qcow2.zip) or [vdi](https://github.com/infraguys/gci_dev_all_in_one/releases/latest/download/stand.vdi.zip) image
+- Get latest release (use preferred format):
+  - [qcow2](https://github.com/infraguys/gci_dev_all_in_one/releases/latest/download/stand.qcow2.gz)
+  - [vdi](https://github.com/infraguys/gci_dev_all_in_one/releases/latest/download/stand.vdi.gz)
+  - [raw.gz](https://github.com/infraguys/gci_dev_all_in_one/releases/latest/download/stand.raw.gz)
 - Run it via your preferred virtualization software (VirtualBox, VMware, etc.), recommendations:
   - Linux: `virt-manager` or VirtualBox
   - Mac: VirtualBox

@@ -2,6 +2,10 @@ name: packer
 
 on:
   push:
+  workflow_dispatch:
+  schedule:
+    # Generate new release at 00:00 on Sunday.
+    - cron: "0 0 * * 0"
 
 env:
   PACKER_VERSION: "latest"
@@ -79,5 +83,6 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ./packed/*
           tag: ${{ github.ref }}
+          release_name: ${{ github.event.repository.updated_at}} (${{ github.ref }})
           overwrite: true
           file_glob: true

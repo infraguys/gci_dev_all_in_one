@@ -30,7 +30,7 @@ pip install genesis-devtools
 
 #Build core image
 git clone -b "$CORE_BRANCH" https://github.com/infraguys/genesis_core.git
-cd genesis_core
+cd ./genesis_core
 export ALLOW_USER_PASSWD=true
 export FREQUENT_LOG_VACUUM=true
 genesis build -f . "$@"

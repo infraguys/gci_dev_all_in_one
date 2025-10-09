@@ -10,10 +10,10 @@ cd /opt
 sudo chown ubuntu ./ -R
 python3 -m venv .venv
 source .venv/bin/activate
-pip install genesis-devtools
+pip install genesis-devtools>=0.5.1
 
 cd $EL_PATH
-genesis bootstrap -i output/genesis-core.raw -f -m core --memory 2000
+genesis bootstrap -i output/genesis-core.raw -f -m core --memory 1200 --use-image-inplace
 sudo virsh autostart genesis-core-bootstrap
 
 while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' 10.20.0.2:11010)" != "200" ]]; do
@@ -73,7 +73,6 @@ curl --location --globoff 'http://10.20.0.2:11010/v1/hypervisors/' \
 #     "image": "http://10.130.0.1:8080/genesis-base.raw"
 # }'
 
-sudo systemctl restart netfilter-persistent.service
 
 # Some post install additions to minify original distributed image
 # zram
@@ -83,6 +82,13 @@ echo "ALGO=zstd" | sudo tee -a /etc/default/zramswap > /dev/null
 echo "PERCENT=20" | sudo tee -a /etc/default/zramswap > /dev/null
 sudo systemctl enable zramswap
 sudo systemctl start zramswap
+
+# ksm
+sudo apt install -y ksmtuned
+# minimize cpu usage
+echo "KSM_SLEEP_MSEC=100" | sudo tee -a /etc/ksmtuned.conf > /dev/null
+sudo systemctl enable ksmtuned
+sudo systemctl start ksmtuned
 
 # Remove the cron job to ensure bootstrap runs only once
 sudo rm /etc/cron.d/core_bootstrap

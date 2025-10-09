@@ -22,7 +22,6 @@ set -o pipefail
 
 EL_PATH="/opt/stand"
 
-
 # Optimize apt
 echo 'APT::Install-Recommends "false";' | sudo tee -a /etc/apt/apt.conf.d/99genesis.conf > /dev/null
 echo 'APT::Install-Suggests "false";' | sudo tee -a /etc/apt/apt.conf.d/99genesis.conf > /dev/null
@@ -49,15 +48,8 @@ sudo cloud-init clean --log --seed
 sudo rm /etc/netplan/50-cloud-init.yaml
 echo "datasource_list: [ None ]" | sudo tee /etc/cloud/cloud.cfg.d/99_overrides.cfg
 
-# ksm
-sudo apt install -y ksmtuned
-# minimize cpu usage
-echo "KSM_SLEEP_MSEC=100" | sudo tee -a /etc/ksmtuned.conf > /dev/null
-sudo systemctl enable ksmtuned
-
 sudo apt-get update
 sudo apt install qemu-guest-agent bridge-utils qemu-kvm libvirt-daemon-system libvirt-dev mkisofs net-tools libvirt-daemon-driver-storage-zfs dnsmasq qemu-system-modules-spice iptables-persistent -y
-
 
 # libvirt install breaks dns, fix it temporarily
 sudo resolvectl dns ens4 1.1.1.1

@@ -26,8 +26,8 @@ ADMIN_TOKEN=$(curl --location 'http://10.20.0.2:11010/v1/iam/clients/00000000-00
     --data-urlencode 'username=admin' \
     --data-urlencode 'password=admin' \
     --data-urlencode 'client_id=GenesisCoreClientId' \
-    --data-urlencode 'client_secret=GenesisCoreClientSecret' \
-    --data-urlencode 'scope=' \
+    --data-urlencode 'client_secret=GenesisCoreSecret' \
+    --data-urlencode 'scope=openid' \
     --data-urlencode 'ttl=31536000' | jq .access_token -r)
 
 echo $ADMIN_TOKEN > /home/ubuntu/admin_token.txt
@@ -61,16 +61,19 @@ curl --location --globoff 'http://10.20.0.2:11010/v1/hypervisors/' \
     }'
 
 # create node example
-# curl --location 'http://10.20.0.2:11010/v1/nodes/' \
+# curl --location 'http://10.20.0.2:11010/v1/compute/nodes/' \
 # --header 'Content-Type: application/json' \
 # --header "Authorization: Bearer $ADMIN_TOKEN" \
 # --data '{
 #     "name": "test",
 #     "project_id": "5d72ca4a-c053-4b93-b52a-c20ad9c37be4",
-#     "root_disk_size": 5,
 #     "cores": 1,
 #     "ram": 2048,
-#     "image": "http://10.130.0.1:8080/genesis-base.raw"
+#     "disk_spec": {
+#         "kind": "root_disk",
+#         "image": "https://github.com/infraguys/gci_dev_all_in_one/releases/download/master/stand.raw.gz",
+#         "size": 5
+#     }
 # }'
 
 

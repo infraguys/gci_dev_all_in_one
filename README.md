@@ -39,8 +39,8 @@ ADMIN_TOKEN=$(curl --location "http://$VM_IP:11010/v1/iam/clients/00000000-0000-
     --data-urlencode 'username=admin' \
     --data-urlencode 'password=admin' \
     --data-urlencode 'client_id=GenesisCoreClientId' \
-    --data-urlencode 'client_secret=GenesisCoreClientSecret' \
-    --data-urlencode 'scope=' \
+    --data-urlencode 'client_secret=GenesisCoreSecret' \
+    --data-urlencode 'scope=openid' \
     --data-urlencode 'ttl=3600' | jq .access_token -r)
 
 # Create node

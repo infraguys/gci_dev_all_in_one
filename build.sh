@@ -23,17 +23,19 @@ set -o pipefail
 
 CORE_BRANCH=${CORE_BRANCH:-master}
 
-
-python3 -m venv /tmp/.venv
-source /tmp/.venv/bin/activate
-pip install genesis-devtools
+curl -fsSL https://repository.genesis-core.tech/install.sh | sudo sh
 
 #Build core image
 git clone -b "$CORE_BRANCH" https://github.com/infraguys/genesis_core.git
 cd ./genesis_core
 export ALLOW_USER_PASSWD=true
 export FREQUENT_LOG_VACUUM=true
-genesis build -f . "$@"
+export GEN_IMG_FORMAT_CORE=raw
+genesis build -f . --inventory --manifest-var repository=https://repository.genesis-core.tech "$@"
+jq '.[0].images[0] = "/opt/stand/genesis_core/output/images/genesis-core.raw"' output/inventory.json > temp.json
+mv temp.json output/inventory.json
+jq '.[0].manifests[0] = "/opt/stand/genesis_core/output/manifests/core.yaml"' output/inventory.json > temp.json
+mv temp.json output/inventory.json
 cd -
 
 # Build stand image

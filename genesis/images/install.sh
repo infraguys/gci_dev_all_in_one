@@ -49,7 +49,7 @@ sudo rm /etc/netplan/50-cloud-init.yaml
 echo "datasource_list: [ None ]" | sudo tee /etc/cloud/cloud.cfg.d/99_overrides.cfg
 
 sudo apt-get update
-sudo apt install qemu-guest-agent bridge-utils qemu-kvm libvirt-daemon-system libvirt-dev mkisofs net-tools libvirt-daemon-driver-storage-zfs dnsmasq qemu-system-modules-spice iptables-persistent -y
+sudo apt install qemu-guest-agent bridge-utils qemu-kvm libvirt-daemon-system libvirt-dev mkisofs ovmf net-tools libvirt-daemon-driver-storage-zfs dnsmasq qemu-system-modules-spice iptables-persistent -y
 
 # libvirt install breaks dns, fix it temporarily
 sudo resolvectl dns ens4 1.1.1.1
@@ -99,3 +99,14 @@ sudo zpool sync
 sudo zpool trim -w rpool
 sudo echo '0' | sudo tee /sys/module/zfs/parameters/zfs_initialize_value > /dev/null
 sudo zpool initialize -w rpool
+
+curl -fsSL https://repository.genesis-core.tech/install.sh | sudo sh
+
+cd "$EL_PATH/genesis_core"
+
+
+genesis bootstrap -i output/inventory.json -f -m core \
+    --hyper-connection-uri qemu+tcp://10.20.0.1/system \
+    --hyper-storage-pool rpool \
+    --save-admin-password-file /home/ubuntu/admin_password.txt \
+    --no-start

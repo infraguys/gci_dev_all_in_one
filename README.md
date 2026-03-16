@@ -1,7 +1,9 @@
 # Genesis-core developer stand all-in-one image
 
 ## How to use
-
+- Requirements to start VM with stand:
+  - **Nested virtualization required!** Don't forget to enable it on stand VM (`nested VT-x/AMD-V`)
+  - x86-64 arch (ARM-based platforms may start stand, but it'll work slower)
 - Get latest release (use preferred format):
   - [qcow2](https://github.com/infraguys/gci_dev_all_in_one/releases/latest/download/stand.qcow2.gz)
   - [vdi](https://github.com/infraguys/gci_dev_all_in_one/releases/latest/download/stand.vdi.gz)

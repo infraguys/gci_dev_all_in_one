@@ -90,7 +90,18 @@ sudo curl http://repository.genesis-core.tech:8081/1af41041/latest/1af41041.rom 
 
 echo "@reboot ubuntu ${EL_PATH}/genesis/images/bootstrap.sh 2>&1 | logger -t genesis_bootstrap" | sudo tee /etc/cron.d/core_bootstrap > /dev/null
 
-# Minimize image size
+curl -fsSL https://repository.genesis-core.tech/install.sh | sudo sh
+
+cd "$EL_PATH/genesis_core"
+
+genesis bootstrap -i output/inventory.json -f -m core \
+    --hyper-connection-uri qemu+tcp://10.20.0.1/system \
+    --hyper-storage-pool rpool \
+    --save-admin-password-file /home/ubuntu/admin_password.txt \
+    --no-start
+
+
+# Minimize image size, MUST be last before shutdown
 sudo apt-get clean
 sudo rm -rf /var/lib/apt/lists/*
 sudo rm -rf /tmp/*
@@ -99,14 +110,3 @@ sudo zpool sync
 sudo zpool trim -w rpool
 sudo echo '0' | sudo tee /sys/module/zfs/parameters/zfs_initialize_value > /dev/null
 sudo zpool initialize -w rpool
-
-curl -fsSL https://repository.genesis-core.tech/install.sh | sudo sh
-
-cd "$EL_PATH/genesis_core"
-
-
-genesis bootstrap -i output/inventory.json -f -m core \
-    --hyper-connection-uri qemu+tcp://10.20.0.1/system \
-    --hyper-storage-pool rpool \
-    --save-admin-password-file /home/ubuntu/admin_password.txt \
-    --no-start

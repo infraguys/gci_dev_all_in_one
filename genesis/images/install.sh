@@ -100,6 +100,8 @@ genesis bootstrap -i output/inventory.json -f -m core \
     --save-admin-password-file /home/ubuntu/admin_password.txt \
     --no-start
 
+cd -
+rm -rf "$EL_PATH/genesis_core"
 
 # Minimize image size, MUST be last before shutdown
 sudo apt-get clean
